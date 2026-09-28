@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>StructScript — AI Documentation Generator</title>
+
+    <!-- Markdown Renderer -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                Helvetica,
+                Arial,
+                sans-serif;
+
+            background: #f6f6f6;
+            color: #1f1f1f;
+        }
+
+
+        /* ================= HEADER ================= */
+
+        header {
+            height: 72px;
+            background: #ffffff;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 42px;
+
+            position: sticky;
+            top: 0;
+            z-index: 100;
+
+            border-bottom: 1px solid #eeeeee;
+        }
+
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            font-size: 23px;
+            font-weight: 750;
+        }
+
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+
+            border-radius: 13px;
+
+            background: #111111;
+            color: #ffffff;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 19px;
+            font-weight: 800;
+        }
+
+
+        .logo-name {
+            letter-spacing: -0.5px;
+        }
+
+
+        .header-badge {
+            padding: 9px 16px;
+
+            border-radius: 30px;
+
+            background: #f1f1f1;
+
+            color: #555555;
+
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+
+        /* ================= HERO ================= */
+
+        .hero {
+            max-width: 1200px;
+            margin: auto;
+
+            padding: 70px 30px 45px;
+        }
+
+
+        .hero-content {
+            max-width: 780px;
+        }
+
+
+        .tag {
+            display: inline-block;
+
+            padding: 8px 15px;
+
+            background: #ffffff;
+
+            border: 1px solid #e5e5e5;
+
+            border-radius: 30px;
+
+            font-size: 13px;
+            font-weight: 600;
+
+            color: #666666;
+
+            margin-bottom: 20px;
+        }
+
+
+        .hero h1 {
+            font-size: clamp(43px, 6vw, 72px);
+
+            line-height: 0.98;
+
+            letter-spacing: -3.5px;
+
+            margin-bottom: 25px;
+        }
+
+
+        .hero h1 span {
+            color: #777777;
+        }
+
+
+        .hero p {
+            font-size: 18px;
+
+            line-height: 1.65;
+
+            color: #666666;
+
+            max-width: 680px;
+        }
+
+
+        /* ================= WORKSPACE ================= */
+
+        .workspace {
+            max-width: 1200px;
+            margin: auto;
+
+            padding: 0 30px 70px;
+
+            display: grid;
+
+            grid-template-columns: 1fr 1fr;
+
+            gap: 25px;
+
+            align-items: start;
+        }
+
+
+        /* ================= CARD ================= */
+
+        .card {
+            background: #ffffff;
+
+            border-radius: 24px;
+
+            padding: 25px;
+
+            border: 1px solid #e8e8e8;
+
+            box-shadow:
+                0 8px 30px rgba(0, 0, 0, 0.04);
+        }
+
+
+        .card-header {
+            display: flex;
+
+            justify-content: space-between;
+            align-items: center;
+
+            margin-bottom: 18px;
+        }
+
+
+        .card-title {
+            font-size: 19px;
+            font-weight: 700;
+        }
+
+
+        .card-number {
+            width: 31px;
+            height: 31px;
+
+            border-radius: 50%;
+
+            background: #f1f1f1;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+            color: #666666;
+        }
+
+
+        /* ================= CODE EDITOR ================= */
+
+        textarea {
+            width: 100%;
+
+            min-height: 390px;
+
+            resize: vertical;
+
+            border: none;
+
+            outline: none;
+
+            background: #151515;
+
+            color: #f5f5f5;
+
+            border-radius: 18px;
+
+            padding: 22px;
+
+            font-family:
+                "Consolas",
+                "Courier New",
+                monospace;
+
+            font-size: 14px;
+
+            line-height: 1.7;
+        }
+
+
+        textarea::placeholder {
+            color: #777777;
+        }
+
+
+        .editor-footer {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-top: 15px;
+        }
+
+
+        .hint {
+            color: #888888;
+            font-size: 13px;
+        }
+
+
+        .generate-btn {
+            border: none;
+
+            background: #111111;
+
+            color: #ffffff;
+
+            padding: 13px 23px;
+
+            border-radius: 30px;
+
+            font-size: 14px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            transition: 0.2s ease;
+        }
+
+
+        .generate-btn:hover {
+            background: #333333;
+
+            transform: translateY(-2px);
+        }
+
+
+        .generate-btn:disabled {
+            opacity: 0.6;
+
+            cursor: not-allowed;
+
+            transform: none;
+        }
+
+
+        /* ================= DOCUMENTATION RESULT ================= */
+
+        #result {
+            min-height: 390px;
+
+            max-height: 600px;
+
+            overflow-y: auto;
+
+            background: #fafafa;
+
+            border-radius: 18px;
+
+            padding: 30px;
+
+            color: #333333;
+
+            line-height: 1.75;
+
+            font-size: 15px;
+        }
+
+
+        /* Markdown headings */
+
+        #result h1 {
+            font-size: 29px;
+
+            line-height: 1.25;
+
+            margin-bottom: 20px;
+
+            color: #151515;
+        }
+
+
+        #result h2 {
+            font-size: 22px;
+
+            margin-top: 30px;
+
+            margin-bottom: 12px;
+
+            color: #202020;
+        }
+
+
+        #result h3 {
+            font-size: 18px;
+
+            margin-top: 24px;
+
+            margin-bottom: 10px;
+        }
+
+
+        /* Markdown paragraphs */
+
+        #result p {
+            margin-bottom: 15px;
+        }
+
+
+        /* Markdown lists */
+
+        #result ul,
+        #result ol {
+            margin: 12px 0 18px 25px;
+        }
+
+
+        #result li {
+            margin-bottom: 7px;
+        }
+
+
+        /* Bold text */
+
+        #result strong {
+            color: #111111;
+        }
+
+
+        /* Horizontal line */
+
+        #result hr {
+            border: none;
+
+            border-top: 1px solid #dddddd;
+
+            margin: 25px 0;
+        }
+
+
+        /* Inline code */
+
+        #result code {
+            background: #eeeeee;
+
+            padding: 3px 7px;
+
+            border-radius: 6px;
+
+            font-family:
+                "Consolas",
+                "Courier New",
+                monospace;
+
+            font-size: 13px;
+        }
+
+
+        /* Code blocks */
+
+        #result pre {
+            background: #171717;
+
+            color: #f5f5f5;
+
+            padding: 20px;
+
+            border-radius: 14px;
+
+            overflow-x: auto;
+
+            margin: 18px 0;
+
+            line-height: 1.6;
+        }
+
+
+        #result pre code {
+            background: transparent;
+
+            padding: 0;
+
+            color: inherit;
+
+            font-size: 13px;
+        }
+
+
+        /* ================= EMPTY RESULT ================= */
+
+        .empty-result {
+            min-height: 330px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            justify-content: center;
+
+            align-items: center;
+
+            text-align: center;
+
+            color: #999999;
+        }
+
+
+        .empty-icon {
+            width: 62px;
+            height: 62px;
+
+            border-radius: 18px;
+
+            background: #eeeeee;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            font-size: 26px;
+
+            margin-bottom: 16px;
+        }
+
+
+        .empty-result strong {
+            color: #555555;
+
+            margin-bottom: 6px;
+        }
+
+
+        /* ================= LOADING ================= */
+
+        .loading {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 10px;
+
+            min-height: 330px;
+
+            color: #777777;
+        }
+
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+
+            border: 2px solid #dddddd;
+
+            border-top-color: #111111;
+
+            border-radius: 50%;
+
+            animation: spin 0.7s linear infinite;
+        }
+
+
+        @keyframes spin {
+
+            to {
+                transform: rotate(360deg);
+            }
+
+        }
+
+
+        /* ================= FEATURES ================= */
+
+        .features {
+            max-width: 1200px;
+
+            margin: auto;
+
+            padding: 0 30px 80px;
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 20px;
+        }
+
+
+        .feature {
+            background: #ffffff;
+
+            border-radius: 22px;
+
+            padding: 25px;
+
+            border: 1px solid #e9e9e9;
+
+            min-height: 180px;
+
+            transition: 0.25s ease;
+        }
+
+
+        .feature:hover {
+            transform: translateY(-5px);
+
+            box-shadow:
+                0 12px 30px rgba(0, 0, 0, 0.07);
+        }
+
+
+        .feature-icon {
+            font-size: 25px;
+
+            margin-bottom: 20px;
+        }
+
+
+        .feature h3 {
+            font-size: 17px;
+
+            margin-bottom: 10px;
+        }
+
+
+        .feature p {
+            color: #777777;
+
+            font-size: 14px;
+
+            line-height: 1.6;
+        }
+
+
+        /* ================= FOOTER ================= */
+
+        footer {
+            border-top: 1px solid #e5e5e5;
+
+            padding: 30px;
+
+            text-align: center;
+
+            color: #888888;
+
+            font-size: 13px;
+
+            background: #ffffff;
+        }
+
+
+        footer strong {
+            color: #333333;
+        }
+
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 850px) {
+
+            header {
+                padding: 0 20px;
+            }
+
+
+            .header-badge {
+                display: none;
+            }
+
+
+            .hero {
+                padding: 50px 20px 35px;
+            }
+
+
+            .workspace {
+                grid-template-columns: 1fr;
+
+                padding: 0 20px 50px;
+            }
+
+
+            .features {
+                grid-template-columns: 1fr;
+
+                padding: 0 20px 50px;
+            }
+
+
+            .hero h1 {
+                letter-spacing: -2px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- ================= HEADER ================= -->
+
+<header>
+
+    <div class="logo">
+
+        <div class="logo-icon">
+            S
+        </div>
+
+        <span class="logo-name">
+            StructScript
+        </span>
+
+    </div>
+
+
+    <div class="header-badge">
+        Powered by Gemini AI
+    </div>
+
+</header>
+
+
+
+<!-- ================= HERO ================= -->
+
+<section class="hero">
+
+    <div class="hero-content">
+
+        <div class="tag">
+            ✦ AI Documentation Generator
+        </div>
+
+
+        <h1>
+
+            Turn code into
+
+            <span>
+                clear documentation.
+            </span>
+
+        </h1>
+
+
+        <p>
+
+            Paste your source code and let AI
+            transform it into clean, structured and
+            beginner-friendly technical documentation
+            in seconds.
+
+        </p>
+
+    </div>
+
+</section>
+
+
+
+<!-- ================= WORKSPACE ================= -->
+
+<section class="workspace">
+
+
+    <!-- SOURCE CODE -->
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <div class="card-title">
+                Your Source Code
+            </div>
+
+            <div class="card-number">
+                01
+            </div>
+
+        </div>
+
+
+        <textarea
+            id="sourceCode"
+            placeholder="// Paste your source code here...
+
+public class Hello {
+
+    public static void main(String[] args) {
+
+        System.out.println(&quot;Hello World&quot;);
+
+    }
+
+}"></textarea>
+
+
+        <div class="editor-footer">
+
+            <span class="hint">
+                Multiple Languages • Source Code
+            </span>
+
+
+            <button
+                class="generate-btn"
+                id="generateButton"
+                onclick="generateDocumentation()">
+
+                Generate →
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- GENERATED DOCUMENTATION -->
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <div class="card-title">
+                Generated Documentation
+            </div>
+
+            <div class="card-number">
+                02
+            </div>
+
+        </div>
+
+
+        <div id="result">
+
+            <div class="empty-result">
+
+                <div class="empty-icon">
+                    ✦
+                </div>
+
+                <strong>
+                    Your documentation will appear here
+                </strong>
+
+                <span>
+                    Paste your code and click Generate
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ================= FEATURES ================= -->
+
+<section class="features">
+
+
+    <div class="feature">
+
+        <div class="feature-icon">
+            ✦
+        </div>
+
+        <h3>
+            AI Powered
+        </h3>
+
+        <p>
+
+            Gemini analyzes your source code
+            and automatically creates useful
+            technical documentation.
+
+        </p>
+
+    </div>
+
+
+
+    <div class="feature">
+
+        <div class="feature-icon">
+            ◈
+        </div>
+
+        <h3>
+            Structured Documentation
+        </h3>
+
+        <p>
+
+            Classes, methods, purpose, workflow
+            and example output are organized
+            into readable sections.
+
+        </p>
+
+    </div>
+
+
+
+    <div class="feature">
+
+        <div class="feature-icon">
+            ↗
+        </div>
+
+        <h3>
+            Fast Generation
+        </h3>
+
+        <p>
+
+            Turn source code into useful
+            documentation without manually
+            writing everything.
+
+        </p>
+
+    </div>
+
+
+</section>
+
+
+
+<!-- ================= FOOTER ================= -->
+
+<footer>
+
+    Built by <strong>Somnath Pal</strong>
+
+</footer>
+
+
+
+<!-- ================= JAVASCRIPT ================= -->
+
+<script>
+
+
+async function generateDocumentation() {
+
+
+    const sourceCode =
+        document.getElementById("sourceCode").value;
+
+
+    const result =
+        document.getElementById("result");
+
+
+    const button =
+        document.getElementById("generateButton");
+
+
+    /* Check empty input */
+
+    if (!sourceCode.trim()) {
+
+        result.innerHTML = `
+
+            <div class="empty-result">
+
+                <div class="empty-icon">
+                    !
+                </div>
+
+                <strong>
+                    Please enter some source code
+                </strong>
+
+                <span>
+                    Paste your source code above to continue.
+                </span>
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    /* Disable button */
+
+    button.disabled = true;
+
+    button.innerText = "Generating...";
+
+
+    /* Loading */
+
+    result.innerHTML = `
+
+        <div class="loading">
+
+            <div class="spinner"></div>
+
+            AI is analyzing your code...
+
+        </div>
+
+    `;
+
+
+    try {
+
+
+        /* Send request to Spring Boot */
+
+        const response =
+            await fetch(
+                "/api/documentation/generate",
+                {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        sourceCode:
+                            sourceCode
+
+                    })
+
+                }
+            );
+
+
+        /* Check response */
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Failed to generate documentation."
+            );
+
+        }
+
+
+        /* Get Gemini response */
+
+        const documentation =
+            await response.text();
+
+
+        /*
+         * Convert Gemini Markdown
+         * into formatted HTML
+         */
+
+        result.innerHTML =
+            marked.parse(documentation);
+
+
+    }
+
+
+    catch (error) {
+
+
+        result.innerHTML = `
+
+            <div class="empty-result">
+
+                <div class="empty-icon">
+                    !
+                </div>
+
+                <strong>
+                    Something went wrong
+                </strong>
+
+                <span>
+                    ${error.message}
+                </span>
+
+            </div>
+
+        `;
+
+    }
+
+
+    finally {
+
+
+        button.disabled = false;
+
+        button.innerText =
+            "Generate →";
+
+    }
+
+}
+
+
+</script>
+
+
+</body>
+
+</html>
